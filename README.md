@@ -1,70 +1,77 @@
-# 📍 Berlin_Halenseestrasse Visual Place Recognition Suite
+# 🗺️ Berlin_Halenseestrasse: Hierarchical Visual Place Recognition with ResNet-18 & Clustering
 
-A comprehensive framework for **Visual Place Recognition (VPR)**, scene classification, and clustering, applied to the **Berlin_Halenseestrasse** dataset. This project combines handcrafted features (HOG), deep features from ResNet/AlexNet, dynamic clustering, and automatic labeling, enabling scalable and accurate visual mapping for robotics, autonomous navigation, and geo-localization tasks.
-
----
-
-## 🔧 Project Overview
-
-This notebook integrates:
-
-- 📸 Visual Feature Extraction using **HOG** and deep **ResNet18/ResNet50/AlexNet365** architectures
-- 🧠 Transfer Learning using **Places365-pretrained CNNs**
-- 🔁 Clustering based on **Cosine Similarity (≥ 0.65)** and distance thresholds
-- 📊 Labeling and visualization using **matplotlib** and **plotly**
-- 🗂️ Dataset creation with automatic **directory structuring** for each cluster
-- 🔄 Data Augmentation: Blurring, Noise, Contrast Stretching, Random Masking, and Rotation
-- ⚙️ End-to-End **PyTorch DataLoader** and classification setup
+A full-stack implementation for **Hierarchical Visual Place Recognition (VPR)** using a combination of handcrafted features (HOG) and deep features (ResNet-18, ResNet-50, AlexNet-365). This project demonstrates how to identify, cluster, and classify visual scenes in an unsupervised or semi-supervised manner using transfer learning and PyTorch.
 
 ---
 
-## 📂 Main Components
+## 🧠 Hierarchical Method for Visual Place Recognition
 
-### 1. 🔍 Feature Extraction
-- HOG descriptors for handcrafted local feature representation.
-- Pretrained **ResNet18/ResNet50** and **AlexNet365** for high-level scene understanding.
-- Custom logic for formatting and parsing image file names for sorted batch processing.
+This project employs a **hierarchical approach** for place recognition:
 
-### 2. 🔗 Similarity and Clustering
-- Cosine similarity-based clustering of HOG features.
-- Dynamic thresholding to define similarity clusters.
-- Classification labels are generated based on cluster membership.
+### Step 1: 🧮 Feature Extraction
+- Use **Histogram of Oriented Gradients (HOG)** to capture low-level visual patterns.
+- Use **ResNet-18 pretrained on Places365** to extract high-level semantic scene features.
 
-### 3. 🧾 Dataset Labeling and Organization
-- Each image is mapped to a new cluster label using a binary encoding format.
-- New folders are created per label, and images are saved along with their augmented variants:
-  - **Original**
-  - **Blurred**
-  - **Salt & Pepper Noise**
-  - **Contrast Enhanced**
-  - **Masked (random region cut)**
-  - **Rotated (±45° random rotation)**
+### Step 2: 🔗 Similarity Computation
+- Compute pairwise **cosine similarities** between feature vectors.
+- Threshold-based grouping: if similarity ≥ 0.65, assign to same group (cluster).
 
-### 4. 🧠 Transfer Learning and Deep Classification
-- Dataset is split using PyTorch `SubsetRandomSampler` into train/validation/test sets.
-- ResNet18 Places365 model is loaded and frozen for inference.
-- Optional fine-tuning capabilities can be integrated using custom `ImageClassificationBase` module.
+### Step 3: 🧱 Hierarchical Clustering Logic
+- Iterate over samples, assigning each to:
+  - A new cluster if unclassified.
+  - An existing cluster if it passes the similarity threshold.
+- Track parent-child relationship in clustering (i.e., hierarchical formation).
 
----
+### Step 4: 🏷️ Cluster Labeling & Dataset Generation
+- Each cluster is assigned a unique binary string as its label.
+- Images are saved in a structured folder hierarchy by label.
 
-## 🧪 Dataset Used
-
-- **Berlin_Halenseestrasse**: Primary dataset of image sequences.
-- **St. Lucia Urban Dataset** (optional): Used for cross-domain comparison and evaluation.
+### Step 5: 🔁 Training with Deep CNN
+- Augmented dataset is used to train/evaluate deep models like ResNet18/AlexNet.
+- Hierarchical clustering serves as weak supervision for deep classifier.
 
 ---
 
-## 📈 Visualizations
+## 📂 Features
 
-- Cluster assignments plotted using:
-  - Bar histograms with cluster sizes
-  - Group-wise scatter plots of index vs. label
-- Data loader batches visualized using `torchvision.make_grid()`
+- 📍 Hierarchical clustering for visual place discovery
+- 🤖 Deep transfer learning with **ResNet-18 / ResNet-50 / AlexNet365**
+- 🧮 HOG feature extraction for handcrafted baseline comparison
+- 🗃️ Dynamic dataset generation with **auto-labeling & folder structuring**
+- 🧪 Advanced data augmentation:
+  - Gaussian blur
+  - Salt & pepper noise
+  - Contrast enhancement
+  - Random masking
+  - Rotation
+- 📈 Visualization using `matplotlib`, `plotly`, and histograms
+- 🔄 Training-ready PyTorch `DataLoader` for supervised/weakly-supervised learning
 
 ---
 
-## 🧰 Requirements
+## 🧪 Datasets
 
-Install required Python libraries:
+### Primary
+- **Berlin_Halenseestrasse** (custom or local dataset)
+
+### Secondary (optional)
+- **St. Lucia Urban Dataset**: Used for generalization and cross-dataset evaluation
+
+---
+
+## 📊 Visualization
+
+- Cluster histogram with group sizes
+- Feature similarity matrix (optional)
+- Grid view of augmented image samples
+- Batch previews from `DataLoader`
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone & Install
 ```bash
-pip install numpy pandas matplotlib scikit-image opencv-python scikit-learn torch torchvision plotly
+git clone https://github.com/your-username/Berlin_Halenseestrasse-VPR.git
+cd Berlin_Halenseestrasse-VPR
+pip install -r requirements.txt
